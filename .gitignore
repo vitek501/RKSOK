@@ -1,0 +1,7 @@
+###Python template
+__pycache__
+*.py[cod]
+*.env
+%SystemDrive%/
+*notebook
+*.vscode
