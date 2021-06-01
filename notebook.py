@@ -24,7 +24,7 @@ class RKSOKNotebook:
     def __init__(self, request_validation: str, response_validation: str):
         self.request_validation = request_validation
         self.response_validation = response_validation
-        self._name = self.parse_name()              
+        self._name = self.parse_name()
 
 
     def parse_name(self) -> str:
@@ -37,13 +37,13 @@ class RKSOKNotebook:
 
     def process_request(self) -> str:
         '''Processes requests and returns a response string'''
-
+        
         for request_verb in (GET, DELETE, WRITE):
             if self.request_validation.startswith(request_verb):
                 break
         else:
             return f'{RESPONSE["INCORRECT_REQUEST"]}\r\n\r\n'
-        if self.response_validation == RESPONSE["NOT_APPROVED"]:
+        if self.response_validation.startswith(RESPONSE["NOT_APPROVED"]):
             return self.response_validation
         else:
             if len(self._name) > 30:
