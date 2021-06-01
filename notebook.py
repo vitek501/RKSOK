@@ -24,32 +24,27 @@ class RKSOKNotebook:
     def __init__(self, request_validation: str, response_validation: str):
         self.request_validation = request_validation
         self.response_validation = response_validation
-        self._name = self.parse_name()
+        self._status, self._name = self.parse_name()
 
 
-    def parse_name(self) -> str:
+    def parse(self) -> str:
         """Checks the length of a name """
 
-        inquiry = self.request_validation.split('\r\n')[0]
-        name = ' '.join(inquiry.split(' ')[1:-1])
-        return name
+        head = self.request_validation.split('\r\n')[0]
+        status = head.split(' ')[0]
+        name = ' '.join(head.split(' ')[1:-1])
+        return (status, name)
 
 
     def process_request(self) -> str:
         '''Processes requests and returns a response string'''
-        
-        for request_verb in (GET, DELETE, WRITE):
-            if self.request_validation.startswith(request_verb):
-                break
-        else:
-            return f'{RESPONSE["INCORRECT_REQUEST"]}\r\n\r\n'
+
+
         if self.response_validation.startswith(RESPONSE["NOT_APPROVED"]):
             return self.response_validation
         else:
-            if len(self._name) > 30:
-                return f'{RESPONSE["INCORRECT_REQUEST"]}\r\n\r\n'
             try:
-                text = self.process_notebook(request_verb)
+                text = self.process_notebook(self._status)
             except (OSError, FileNotFoundError):
                 return f'{RESPONSE["NOTFOUND"]} {PROTOCOL}\r\n\r\n' # Failed requests
             if self.request_validation.startswith(GET):
