@@ -13,7 +13,6 @@ RESPONSE = {
     "INCORRECT_REQUEST": "НИПОНЯЛ",
     }
 
-
 PROTOCOL = "РКСОК/1.0"
 ENCODING = "UTF-8"
 
@@ -24,39 +23,35 @@ class RKSOKNotebook:
     def __init__(self, request_validation: str, response_validation: str):
         self.request_validation = request_validation
         self.response_validation = response_validation
-        self._status, self._name = self.parse_name()
-
+        self._request, self._name = self.parse()
 
     def parse(self) -> str:
-        """Checks the length of a name """
+        """Breaks down into request and name """
 
         head = self.request_validation.split('\r\n')[0]
-        status = head.split(' ')[0]
+        request = head.split(' ')[0]
         name = ' '.join(head.split(' ')[1:-1])
-        return (status, name)
-
+        return (request, name)
 
     def process_request(self) -> str:
         '''Processes requests and returns a response string'''
-
 
         if self.response_validation.startswith(RESPONSE["NOT_APPROVED"]):
             return self.response_validation
         else:
             try:
-                text = self.process_notebook(self._status)
+                text = self.process_notebook(self._request)
             except (OSError, FileNotFoundError):
                 return f'{RESPONSE["NOTFOUND"]} {PROTOCOL}\r\n\r\n' # Failed requests
             if self.request_validation.startswith(GET):
                 if not text:
-                    return f'{RESPONSE["NOTFOUND"]} {PROTOCOL}\r\n\r\n' # GET request without phone number
+                    return f'{RESPONSE["NOTFOUND"]} {PROTOCOL}\r\n\r\n' # GET request without phone
                 else:
                     text = text.replace('\n', '\r\n')
                     return f'{RESPONSE["OK"]} {PROTOCOL}\r\n{text}\r\n\r\n'
             else:
                 return f'{RESPONSE["OK"]} {PROTOCOL}\r\n\r\n'
-
-    
+  
     def process_notebook(self, request:str) -> Union[str]:
         '''Running a function depending on the type of request'''
 
@@ -68,20 +63,17 @@ class RKSOKNotebook:
         elif request == DELETE:
                 return self.deleting_from_notebook(self._name)
 
-
     def notebook_entry(self, name: str, phone: str) -> None:
         '''Creates a file named (name) containing (phone)'''
 
         with open(f'notebook/{name}.txt', mode='w') as f:
             f.write(f'{phone.strip()}')
 
-
     def read_notebook(self, name: str) -> str:
         '''Reads information from a file (name)'''
 
         with open(f'notebook/{name}.txt', mode='r') as f:
             return f.read()
-
 
     def deleting_from_notebook(self, name: str) -> None:
         '''Deletes the file(name)'''

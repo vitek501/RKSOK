@@ -3,5 +3,4 @@ __pycache__
 *.py[cod]
 *.env
 %SystemDrive%/
-*notebook
 *.vscode
