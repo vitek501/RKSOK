@@ -28,7 +28,7 @@ async def handle_echo(reader, writer):
                 client = RKSOKNotebook(message1, response_validation)
                 raw_response = client.process_request()
             except (NotResponseValidationServerError, ConnectionRefusedError):
-                logger.info(f"Нет ответа от сервера проверки!")
+                logger.warning(f"Нет ответа от сервера проверки!")
                 raw_response = f'{PROTOCOL}\r\nИзвините, нет ответа от сервера проверки!\r\nПопробуйте позже!\r\n\r\n'
         else:
             raw_response = f'{INCORRECT_REQUEST}\r\n\r\n'
