@@ -1,5 +1,5 @@
 from os import remove
-from typing import Union
+from typing import Optional
 import aiofiles
 
 
@@ -53,7 +53,7 @@ class RKSOKNotebook:
             else:
                 return f'{RESPONSE["OK"]} {PROTOCOL}\r\n\r\n'
   
-    def process_notebook(self, request:str) -> Union[str]:
+    def process_notebook(self, request:str) -> Optional[str]:
         '''Running a function depending on the type of request'''
 
         data = '\r\n'.join(self.request_validation.split('\r\n')[1:])
